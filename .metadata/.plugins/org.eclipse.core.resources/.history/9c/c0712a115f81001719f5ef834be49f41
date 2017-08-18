@@ -1,0 +1,5 @@
+package external;
+
+public interface ExternalAPI {
+
+}
