@@ -82,6 +82,7 @@ public class MySQLConnection implements DBConnection {
 		}
 	}
 
+
 	@Override
 	public Set<String> getFavoriteItemIds(String userId) {
 		Set<String> favoriteItems = new HashSet<>();
@@ -153,6 +154,8 @@ public class MySQLConnection implements DBConnection {
 		}
 		return favoriteItems;
 	}
+
+
 
 	@Override
 	public Set<String> getCategories(String itemId) {

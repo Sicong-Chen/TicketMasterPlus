@@ -20,13 +20,13 @@ import entity.Item.ItemBuilder;
 public class TicketMasterAPI implements ExternalAPI {
 	private static final String API_HOST = "app.ticketmaster.com";
 	private static final String SEARCH_PATH = "/discovery/v2/events.json";
-	private static final String DEFAULT_TERM = "";  // no restriction
+	// private static final String DEFAULT_TERM = "";  // no restriction
 	private static final String API_KEY = "Jnt6QHEgL77JF2GP093dwJapLSSbAhV9";
+	
+	private static final String DEFAULT_TERM = "ticket";  // not empty or null
 
 
-	/**
-	 * Creates and sends a request to the TicketMaster API by term and location.
-	 */
+	/*
 	@Override
 	public List<Item> search(double lat, double lon, String term) {
 		String url = "http://" + API_HOST + SEARCH_PATH;
@@ -62,6 +62,49 @@ public class TicketMasterAPI implements ExternalAPI {
 		}
 		return null;
 	}
+	*/
+	
+	/**
+	 * Creates and sends a request to the TicketMaster API by term and location.
+	 */
+	public List<Item> search(double lat, double lon, String term) {
+	String url = "http://" + API_HOST + SEARCH_PATH;
+		// Convert geo location to geo hash with a precision of 4 (+- 20km)
+		String geohash = GeoHash.encodeGeohash(lat, lon, 4);
+		if (term == null) {
+			term = DEFAULT_TERM;
+		}
+		term = urlEncodeHelper(term);
+		String query = String.format("apikey=%s&geoPoint=%s&keyword=%s", API_KEY, geohash, term);
+		try {
+			HttpURLConnection connection = (HttpURLConnection) new URL(url + "?" + query).openConnection();
+			connection.setRequestMethod("GET");
+ 
+			int responseCode = connection.getResponseCode();
+			System.out.println("\nSending 'GET' request to URL : " + url + "?" + query);
+			System.out.println("Response Code : " + responseCode);
+ 
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuilder response = new StringBuilder();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// Extract events array only.
+			JSONObject responseJson = new JSONObject(response.toString());
+			JSONObject embedded = (JSONObject) responseJson.get("_embedded");
+			JSONArray events = (JSONArray) embedded.get("events");
+			return getItemList(events);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
+	
 
 	private String urlEncodeHelper(String term) {
 		try {

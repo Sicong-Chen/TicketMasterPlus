@@ -1,0 +1,40 @@
+	/**
+	 * Variables
+	 */
+	var user_id = '1111';
+	var lng = -122.08;
+	var lat = 37.38;
+  
+function showLoadingMessage(msg) {
+	var itemList = $('#item-list');
+	itemList.html('<p class="notice"><i class="fa fa-spinner fa-spin"></i> '+ msg + '</p>');
+}
+
+function showWarningMessage(msg) {
+    var itemList = $('#item-list');
+    itemList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-triangle"></i> ' + msg + '</p>';
+}
+
+function showErrorMessage(msg) {
+	var itemList = $('#item-list');
+	itemList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-circle"></i> ' + msg + '</p>';
+}
+
+function activeBtn(btnId) {
+	var btns = document.getElementsByClassName('main-nav-btn');
+	var btn = $(btnId);
+    console.log(btn.className)
+
+	for (var i = 0; i < btns.length; i++) {
+		btns[i].className =btns[i].className.replace(/\bactive\b/, '');
+	}
+
+	// active the one that has id = btnId
+	btn = $(btnId);
+	btn.className += ' active';
+    console.log(btn.className)
+
+}
+
+
+activeBtn('nearby-btn');
